@@ -1,63 +1,41 @@
 /*
  * Copyright IBM Corp. 2012, 2023
  *
- * The source code for this program is not published or otherwise divested 
- * of its trade secrets, irrespective of what has been deposited with the 
+ * The source code for this program is not published or otherwise divested
+ * of its trade secrets, irrespective of what has been deposited with the
  * U.S. Copyright Office.
  */
 package com.ibm.ws.jndi.global.fat;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestRule;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
 
+import com.ibm.websphere.simplicity.ShrinkHelper;
+import com.ibm.ws.jndi.global.fat.web.JNDITestServlet;
+
+import componenttest.annotation.Server;
+import componenttest.annotation.TestServlet;
+import componenttest.custom.junit.runner.FATRunner;
 import componenttest.topology.impl.LibertyServer;
-import componenttest.topology.impl.LibertyServerFactory;
+import componenttest.topology.utils.FATServletClient;
 
-public class JNDIGlobalTests {
+@RunWith(FATRunner.class)
+public class JNDIGlobalTests extends FATServletClient {
 
-    private static LibertyServer server = LibertyServerFactory.getLibertyServer("jndi_fat");
+    @Server("jndi_fat")
+    @TestServlet(servlet = JNDITestServlet.class, contextRoot = "jndi-global")
+    public static LibertyServer server;
 
-    // @ClassRule
-    // public static TestRule startAndStopServerRule = startAndStopAutomatically(server);
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        ShrinkHelper.exportDropinAppToServer(server, FATSuite.JNDI_GLOBAL_WAR);
+        server.startServer();
+    }
 
-    // @Rule
-    // public TestRule runAll = runAllUsingTestNames(server).usingApp("jndi-global").andServlet("JNDITestServlet");
+    @AfterClass
+    public static void afterClass() throws Exception {
+        server.stopServer();
+    }
 
-    @Test
-    public void testServletIsReachable() {}
-
-    @Test
-    public void testCreateInitialContext() {}
-
-    @Test
-    public void testCreateSubcontext() {}
-
-    @Test
-    public void testBindUnbind() {}
-
-    @Test
-    public void testRename() {}
-
-    @Test
-    public void testListExternal() throws Exception {}
-
-    @Test
-    public void testListExternalBindings() throws Exception {}
-
-    @Test
-    public void testDeleteExternalBindings() throws Exception {}
-
-    @Test
-    public void testMultipleRebinds() throws Exception {}
-
-    @Test
-    public void testCustomInitialContextFactory() throws Exception {}
-
-    @Test
-    public void testRebindNewValue() throws Exception {}
-
-    @Test
-    public void testNamingManager() throws Exception {}
 }

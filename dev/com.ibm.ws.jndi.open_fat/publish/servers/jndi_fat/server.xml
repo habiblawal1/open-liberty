@@ -14,11 +14,17 @@
 
     <featureManager>
         <feature>servlet-3.1</feature>
-        <feature>componenttest-1.0</feature>
+         <feature>componentTest-1.0</feature>
+        <feature>jndi-1.0</feature>
     </featureManager>
     
-    <include location="../fatTestPorts.xml"/>
+    <jndiEntry jndiName="database/user/name" value="sam" />
+    <jndiEntry jndiName="database/user/password" value="beckett" />
+    <jndiEntry jndiName="database/user/retryCount" value="7" />
+    <jndiEntry jndiName="database/admin/name" value="al" />
+    <jndiEntry jndiName="database/admin/password" value="admiral" />
+    <jndiEntry jndiName="database/admin/retryCount" value="3" />
     
-    <application location="app1.war" />
+    <include location="../fatTestPorts.xml"/>
 
 </server>

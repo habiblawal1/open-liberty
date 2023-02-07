@@ -1,8 +1,8 @@
 /*
  * WLP Copyright IBM Corp. 2023
  *
- * The source code for this program is not published or otherwise divested 
- * of its trade secrets, irrespective of what has been deposited with the 
+ * The source code for this program is not published or otherwise divested
+ * of its trade secrets, irrespective of what has been deposited with the
  * U.S. Copyright Office.
  */
 package com.ibm.ws.jndi.global.fat;
@@ -17,19 +17,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.runner.Description;
+
 import org.junit.rules.TestRule;
 import org.junit.runners.model.Statement;
 
 import com.ibm.websphere.simplicity.log.Log;
 import com.ibm.ws.jndi.global.fat.data.AppName;
 import com.ibm.ws.jndi.global.fat.data.ServletName;
+
 import componenttest.topology.impl.LibertyServer;
 import componenttest.topology.utils.HttpUtils;
 
 /**
  * Run name-based tests by sending HTTP requests to test methods on the given server and app.
  */
-public class ServletMethodRunner {
+public class ServletMethodRunner implements TestRule {
     /** The time in seconds to wait at a URL before giving up. **/
     private static final int CONN_TIMEOUT = 30;
     private static final Class<?> c = ServletMethodRunner.class;
@@ -48,7 +50,7 @@ public class ServletMethodRunner {
 
     /**
      * Run the test with the given name.
-     * 
+     *
      * @param testMethod The test to run.
      */
     public final void run(final String testMethod) {
@@ -81,9 +83,9 @@ public class ServletMethodRunner {
     /**
      * Invoke the specified servlet and wait until the passed in response
      * code is returned.
-     * 
+     *
      * @param testMethod The test to get the response for.
-     * 
+     *
      * @return the message associated with the response
      */
     final String getResponseFor(final String testMethod) throws Exception {
@@ -112,7 +114,7 @@ public class ServletMethodRunner {
     /**
      * This method is used to read the response from either the input stream or
      * error stream.
-     * 
+     *
      * @param con The connection to the HTTP address
      * @return The output or error from the webpage
      * @throws IOException if neither the input stream nor error stream can be read
@@ -129,7 +131,7 @@ public class ServletMethodRunner {
 
     /**
      * Read a buffer line-by-line and concatenate into a String.
-     * 
+     *
      * @param br
      * @return
      * @throws IOException
@@ -146,7 +148,7 @@ public class ServletMethodRunner {
 
     @Override
     public Statement apply(Statement base, Description description) {
-        // logInfo("Before test", description);
+       // logInfo("Before test", description);
         Log.info(c, "apply", "Before test" + description.getMethodName());
         try {
             return new Statement() {
@@ -157,7 +159,7 @@ public class ServletMethodRunner {
             };
         } finally {
             Log.info(c, "apply", "After test" + description.getMethodName());
-            //  logInfo("After test", description);
+          //  logInfo("After test", description);
         }
     }
 }
