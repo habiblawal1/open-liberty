@@ -6,9 +6,6 @@
 # http://www.eclipse.org/legal/epl-2.0/
 # 
 # SPDX-License-Identifier: EPL-2.0
-#
-# Contributors:
-#     IBM Corporation - initial API and implementation
 #*******************************************************************************
 -include= ~../cnf/resources/bnd/bundle.props
 bVersion=1.0
@@ -19,7 +16,7 @@ javac.target: 11
 Require-Capability: osgi.ee; filter:="(&(osgi.ee=JavaSE)(version=11))"
 
 Bundle-SymbolicName: io.openliberty.org.apache.myfaces.4.0
-Bundle-Description:  Jakarta Server Faces, MyFaces 4.0 Implementation
+Bundle-Description:  Jakarta Faces, MyFaces 4.0 Implementation
 
 Implementation-Version: 4.0.0
 
@@ -29,10 +26,8 @@ instrument.ffdc: false
 instrument.classesExcludes: \
   org/**/*.class
 
-# Use this format once we have an official release and not an RC4
-# @${repo;org.apache.myfaces.core:myfaces-impl;${Implementation-Version};EXACT}!/jakarta/faces, \
 Include-Resource: \
-  @${repo;org.apache.myfaces.core:myfaces-impl;4.0.0.RC4;EXACT}!/META-INF/**, \
+  @${repo;org.apache.myfaces.core:myfaces-impl;${Implementation-Version};EXACT}!/META-INF/**, \
   @${repo;io.openliberty.jakarta.faces.4.0}!/META-INF/resources/**, \
   @${repo;io.openliberty.jakarta.faces.4.0}!/META-INF/internal-resources/**, \
   META-INF=@src/META-INF
@@ -80,21 +75,15 @@ Export-Package: \
   org.apache.myfaces.context;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.context.servlet;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.config.annotation;thread-context=true;version=${Implementation-Version}, \
-  org.apache.myfaces.config.impl.digester.elements;thread-context=true;version=${Implementation-Version}, \
-  org.apache.myfaces.el.convert;thread-context=true;version=${Implementation-Version}, \
+  org.apache.myfaces.config.impl.element;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.flow;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.flow.cdi;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.lifecycle;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.lifecycle.clientwindow;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.push.cdi;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.renderkit;thread-context=true;version=${Implementation-Version}, \
-  org.apache.myfaces.shared.context.flash;thread-context=true;version=${Implementation-Version}, \
-  org.apache.myfaces.shared.taglib;thread-context=true;version=${Implementation-Version}, \
-  org.apache.myfaces.shared.taglib.core;thread-context=true;version=${Implementation-Version}, \
-  org.apache.myfaces.shared.util;thread-context=true;version=${Implementation-Version}, \
+  org.apache.myfaces.context.flash;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.spi.impl;thread-context=true;version=${Implementation-Version}, \
-  org.apache.myfaces.taglib.core;thread-context=true;version=${Implementation-Version}, \
-  org.apache.myfaces.taglib.html;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.view;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.view.facelets;thread-context=true;version=${Implementation-Version}, \
   org.apache.myfaces.view.facelets.compiler;thread-context=true;version=${Implementation-Version}, \
@@ -124,10 +113,8 @@ Import-Package: \
   !org.apache.tomcat, \
   *
 
-# Use this once we have a non RC4 release
-# org.apache.myfaces.core:myfaces-impl;strategy=exact;version=${Implementation-Version},\
 -buildpath: \
-  org.apache.myfaces.core:myfaces-impl;strategy=exact;version=4.0.0.RC4,\
+  org.apache.myfaces.core:myfaces-impl;strategy=exact;version=${Implementation-Version},\
   io.openliberty.jakarta.faces.4.0;version=latest,\
   com.ibm.ws.classloading;version=latest,\
   com.ibm.ws.webcontainer.jakarta;version=latest,\

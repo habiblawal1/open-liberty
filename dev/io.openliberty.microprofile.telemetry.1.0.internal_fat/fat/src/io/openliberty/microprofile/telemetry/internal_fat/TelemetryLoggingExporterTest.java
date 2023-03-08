@@ -6,15 +6,13 @@
  * http://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package io.openliberty.microprofile.telemetry.internal_fat;
 
 import static com.ibm.websphere.simplicity.ShrinkHelper.DeployOptions.SERVER_ONLY;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -26,8 +24,6 @@ import org.junit.runner.RunWith;
 import com.ibm.websphere.simplicity.ShrinkHelper;
 
 import componenttest.annotation.Server;
-import componenttest.annotation.TestServlet;
-import componenttest.annotation.TestServlets;
 import componenttest.custom.junit.runner.FATRunner;
 import componenttest.topology.impl.LibertyServer;
 import componenttest.topology.utils.FATServletClient;
@@ -53,6 +49,7 @@ public class TelemetryLoggingExporterTest extends FATServletClient {
 
         //Use logging exporter
         server.addEnvVar("otel_traces_exporter", "logging");
+
         server.startServer();
     }
 
@@ -61,9 +58,9 @@ public class TelemetryLoggingExporterTest extends FATServletClient {
         server.setMarkToEndOfLog();
 
         runTest(server, APP_NAME + "/LoggingServlet", "testLoggingExporter");
-        
+
         //The exporter should not give this error message
-        assertNull(server.verifyStringNotInLogUsingMark("Failed to export spans",1000));
+        assertNull(server.verifyStringNotInLogUsingMark("Failed to export spans", 1000));
 
         //Checks for span output in logs
         assertFalse(server.waitForStringInLogUsingMark("io.opentelemetry.exporter.logging.LoggingSpanExporter").isEmpty());

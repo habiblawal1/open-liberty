@@ -22,6 +22,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -31,9 +34,13 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.ibm.websphere.simplicity.RemoteFile;
+import com.ibm.websphere.simplicity.config.ServerConfiguration;
+import com.ibm.websphere.simplicity.config.Variable;
 import com.ibm.websphere.simplicity.log.Log;
 
 import componenttest.custom.junit.runner.AlwaysPassesTest;
+import componenttest.rules.repeater.JakartaEE10Action;
+import componenttest.rules.repeater.JakartaEE9Action;
 import componenttest.topology.impl.LibertyFileManager;
 import componenttest.topology.impl.LibertyServer;
 
@@ -46,6 +53,7 @@ import componenttest.topology.impl.LibertyServer;
                 OSGiConsoleTest.class,
                 LocalEJBTest.class,
                 CheckpointSPITest.class,
+                CheckpointWithSecurityManager.class,
                 MPConfigTest.class,
                 SSLTest.class,
                 MPOpenTracingJaegerTraceTest.class,
@@ -68,7 +76,12 @@ import componenttest.topology.impl.LibertyServer;
                 JsonpTest.class,
                 ManagedBeansTest.class,
                 BellsTest.class,
-                SkipIfCheckpointNotSupportedAnnotationTest.class
+                JaxWSVirtualHostTest.class,
+                WebAppMessageTest.class,
+                URAPIs_Federation_2LDAPsTest.class,
+                SkipIfCheckpointNotSupportedAnnotationTest.class,
+                RestConnectorTest.class,
+                AuditTest.class
 })
 
 public class FATSuite {
@@ -128,6 +141,37 @@ public class FATSuite {
         File serverEnvFile = new File(server.getFileFromLibertyServerRoot("server.env").getAbsolutePath());
         try (OutputStream out = new FileOutputStream(serverEnvFile)) {
             serverEnvProperties.store(out, "");
+        }
+    }
+
+    static void updateVariableConfig(LibertyServer server, String name, String value) throws Exception {
+        // change config of variable for restore
+        ServerConfiguration config = removeTestKeyVar(server.getServerConfiguration(), name);
+        config.getVariables().add(new Variable(name, value));
+        server.updateServerConfiguration(config);
+    }
+
+    static ServerConfiguration removeTestKeyVar(ServerConfiguration config, String key) {
+        for (Iterator<Variable> iVars = config.getVariables().iterator(); iVars.hasNext();) {
+            Variable var = iVars.next();
+            if (var.getName().equals(key)) {
+                iVars.remove();
+            }
+        }
+        return config;
+    }
+
+    public static void transformApps(LibertyServer myServer, String... apps) {
+        if (JakartaEE9Action.isActive()) {
+            for (String app : apps) {
+                Path someArchive = Paths.get(myServer.getServerRoot() + File.separatorChar + "dropins" + File.separatorChar + app);
+                JakartaEE9Action.transformApp(someArchive);
+            }
+        } else if (JakartaEE10Action.isActive()) {
+            for (String app : apps) {
+                Path someArchive = Paths.get(myServer.getServerRoot() + File.separatorChar + "dropins" + File.separatorChar + app);
+                JakartaEE10Action.transformApp(someArchive);
+            }
         }
     }
 }

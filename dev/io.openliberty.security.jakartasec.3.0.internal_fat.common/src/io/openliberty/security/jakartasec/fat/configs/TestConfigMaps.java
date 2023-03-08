@@ -12,10 +12,13 @@
  *******************************************************************************/
 package io.openliberty.security.jakartasec.fat.configs;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.ibm.websphere.simplicity.log.Log;
+import com.ibm.ws.security.fat.common.web.WebRequestUtils;
 
 import io.openliberty.security.jakartasec.fat.utils.Constants;
 import jakarta.security.enterprise.authentication.mechanism.http.openid.DisplayType;
@@ -36,6 +39,8 @@ public class TestConfigMaps {
     public static final String UserInfoOtherCallerNameClaimBadCaller = "UserInfoOtherCallerNameClaimBadCaller";
 
     public static final String AllDefault = "UserInfo";
+
+    protected static WebRequestUtils webReqUtils = new WebRequestUtils();
 
     /*************** OpenIdAuthenticationMechanismDefinition ************/
     public static Map<String, Object> getProviderUri(String opBase, String provider) throws Exception {
@@ -501,6 +506,61 @@ public class TestConfigMaps {
         Map<String, Object> updatedMap = new HashMap<String, Object>();
         updatedMap.put(Constants.PROMPT_EXPRESSION, new PromptType[] { PromptType.LOGIN, PromptType.LOGIN });
         return updatedMap;
+    }
+
+    public static Map<String, Object> getTokenMinValidity5s() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_MIN_VALIDITY_EXPRESSION, 5 * 1000);
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTokenMinValidity15s() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_MIN_VALIDITY_EXPRESSION, 15 * 1000);
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTokenMinValidity20s() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_MIN_VALIDITY_EXPRESSION, 20 * 1000);
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTokenMinValidity60s() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_MIN_VALIDITY_EXPRESSION, 60 * 1000);
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTokenMinValidity90s() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_MIN_VALIDITY_EXPRESSION, 90 * 1000);
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTokenMinValidity0s() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_MIN_VALIDITY_EXPRESSION, 0);
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTokenMinValidityNegative5s() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_MIN_VALIDITY_EXPRESSION, -5 * 1000);
+        return updatedMap;
 
     }
 
@@ -602,10 +662,27 @@ public class TestConfigMaps {
     }
 
     /****************** LogoutDefinitions ********************/
-    public static Map<String, Object> getRedirectURIGood_Logout(String opBase, String provider) throws Exception {
+    public static Map<String, Object> getRedirectURIGood_Logout(String rpBase) throws Exception {
+        return getRedirectURIGood_Logout(rpBase, null);
+    }
+
+    public static Map<String, Object> getRedirectURIGoodWithExtraParms_Logout(String rpBase) throws Exception {
+        Map<String, List<String>> parmsMap = new HashMap<String, List<String>>();
+        parmsMap.put("testParm1", Arrays.asList("testParm1_value"));
+        parmsMap.put("testParm2", Arrays.asList("testParm2_value"));
+        parmsMap.put("testParm3", Arrays.asList("testParm3_value"));
+        return getRedirectURIGood_Logout(rpBase, parmsMap);
+    }
+
+    public static Map<String, Object> getRedirectURIGood_Logout(String rpBase, Map<String, List<String>> parms) throws Exception {
 
         Map<String, Object> updatedMap = new HashMap<String, Object>();
-        updatedMap.put(Constants.LOGOUT_REDIRECT_URI, opBase + "/oidc/endpoint/" + provider + "/end_session");
+        if (parms == null) {
+            updatedMap.put(Constants.LOGOUT_REDIRECT_URI, rpBase + "/PostLogoutServlet/PostLogout");
+        } else {
+            String parmString = webReqUtils.buildUrlQueryString(parms);
+            updatedMap.put(Constants.LOGOUT_REDIRECT_URI, rpBase + "/PostLogoutServlet/PostLogout?" + parmString);
+        }
         return updatedMap;
 
     }
@@ -614,6 +691,14 @@ public class TestConfigMaps {
 
         Map<String, Object> updatedMap = new HashMap<String, Object>();
         updatedMap.put(Constants.LOGOUT_REDIRECT_URI, opBase);
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getRedirectURIEndSession_Logout(String opBase, String provider) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.LOGOUT_REDIRECT_URI, opBase + "/oidc/endpoint/" + provider + "/end_session");
         return updatedMap;
 
     }
@@ -682,12 +767,116 @@ public class TestConfigMaps {
 
     }
 
+    public static Map<String, Object> getDefaultAuthorizationEndpoint(String opBase, String provider) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.AUTHORIZATION_ENDPOINT, opBase + "/oidc/endpoint/" + provider + "/authorize");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTestAuthorizationEndpoint(String rpBase) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.AUTHORIZATION_ENDPOINT, rpBase + "/Endpoints/authorize");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getEmptyAuthorizationEndpoint() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.AUTHORIZATION_ENDPOINT, "");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getBadAuthorizationEndpoint(String rpBase) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.AUTHORIZATION_ENDPOINT, rpBase + "/Endpoints/doesntExist");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getDefaultTokenEndpoint(String opBase, String provider) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_ENDPOINT, opBase + "/oidc/endpoint/" + provider + "/token");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTestTokenEndpoint(String rpBase) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_ENDPOINT, rpBase + "/Endpoints/token");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getEmptyTokenEndpoint() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_ENDPOINT, "");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getBadTokenEndpoint(String rpBase) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_ENDPOINT, rpBase + "/Endpoints/doesntExist");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTestTokenSaveEndpoint(String rpBase) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.TOKEN_ENDPOINT, rpBase + "/TokenEndpointServlet/getToken");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTestJwksURI(String rpBase) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.JWKSURI, rpBase + "/Endpoints/jwk");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getDefaultJwksURI(String opBase, String provider) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.JWKSURI, opBase + "/oidc/endpoint/" + provider + "/jwk");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getEmptyJwksURI() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.JWKSURI, "");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getTestUserinfoEndpoint(String rpBase) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.USERINFO_ENDPOINT, rpBase + "/Endpoints/userinfo");
+        return updatedMap;
+
+    }
+
     public static Map<String, Object> getGoodUserInfo(String opBase, String provider) throws Exception {
 
         String userinfoApp = opBase + "oidc/endpoint/" + provider + "/userinfo";
         Map<String, Object> updatedMap = new HashMap<String, Object>();
         Log.info(thisClass, "", "userinfoApp: " + userinfoApp);
-        updatedMap.put(Constants.USERINFOENDPOINT, userinfoApp);
+        updatedMap.put(Constants.USERINFO_ENDPOINT, userinfoApp);
         return updatedMap;
 
     }
@@ -696,7 +885,7 @@ public class TestConfigMaps {
 
         Map<String, Object> updatedMap = new HashMap<String, Object>();
         Log.info(thisClass, "", "userinfoApp: " + userinfoApp);
-        updatedMap.put(Constants.USERINFOENDPOINT, rpBase + "/UserInfo/" + userinfoApp);
+        updatedMap.put(Constants.USERINFO_ENDPOINT, rpBase + "/UserInfo/" + userinfoApp);
         return updatedMap;
 
     }
@@ -705,7 +894,7 @@ public class TestConfigMaps {
 
         Map<String, Object> updatedMap = new HashMap<String, Object>();
         Log.info(thisClass, "", "userinfoApp: " + opBase);
-        updatedMap.put(Constants.USERINFOENDPOINT, opBase);
+        updatedMap.put(Constants.USERINFO_ENDPOINT, opBase);
         return updatedMap;
 
     }
@@ -714,7 +903,97 @@ public class TestConfigMaps {
 
         Map<String, Object> updatedMap = new HashMap<String, Object>();
         Log.info(thisClass, "", "userinfoApp:  (not set)");
-        updatedMap.put(Constants.USERINFOENDPOINT, "");
+        updatedMap.put(Constants.USERINFO_ENDPOINT, "");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getEndSessionEndpoint(String serverBase, String appName) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        Log.info(thisClass, "", "endSessionApp: " + appName);
+        updatedMap.put(Constants.ENDSESSION_ENDPOINT, serverBase + "/" + appName);
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getEmptyEndSessionEndpoint() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        Log.info(thisClass, "", "endSessionApp: \"\"");
+        updatedMap.put(Constants.ENDSESSION_ENDPOINT, "");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getDefaultIssuer(String opBase, String provider) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.ISSUER, opBase + "/oidc/endpoint/" + provider);
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getEmptyIssuer() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.ISSUER, "");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getBadIssuer(String rpBase) throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.ISSUER, rpBase + "/someProvider");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getDefaultSubjectTypeSupported() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.SUBJECTTYPESUPPORTED, "public");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getEmptySubjectTypeSupported() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.SUBJECTTYPESUPPORTED, "");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getBadSubjectTypeSupported() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.SUBJECTTYPESUPPORTED, "SomeValue");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getDefaultResponseTypeSupported() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.RESPONSETYPESUPPORTED, "code,id_token,token id_token");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getEmptyResponseTypeSupported() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.RESPONSETYPESUPPORTED, "");
+        return updatedMap;
+
+    }
+
+    public static Map<String, Object> getBadResponseTypeSupported() throws Exception {
+
+        Map<String, Object> updatedMap = new HashMap<String, Object>();
+        updatedMap.put(Constants.RESPONSETYPESUPPORTED, "SomeValue");
         return updatedMap;
 
     }

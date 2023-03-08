@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -231,7 +231,9 @@ public class CommonAnnotatedSecurityTests extends CommonSecurityFat {
     public Page invokeApp(WebClient webClient, String url, Expectations expectations) throws Exception {
 
         Page response = null;
-        rspValues.setOriginalRequest(url);
+        if (!(rspValues.getOriginalRequest() != null && rspValues.getOriginalRequest().contains(ServletMessageConstants.UNAUTH_SESSION_REQUEST_EXCEPTION))) {
+            rspValues.setOriginalRequest(url);
+        }
 
         // the call to invokeUrlWithParametersAndHeaders mangles the headers, so make a copy
         HashMap<String, String> tempHeaders = null;
@@ -285,6 +287,38 @@ public class CommonAnnotatedSecurityTests extends CommonSecurityFat {
     public Page invokeAppReturnLogoutPage(WebClient webClient, String url) throws Exception {
 
         return invokeApp(webClient, url, CommonExpectations.successfullyReachedOidcLogoutPage());
+
+    }
+
+    /**
+     * Invoke the requested app - and ensure that we landed on the post logout page - we'll land on this page when we try to use expired tokens
+     *
+     * @param webClient
+     *            the webClient to use to make the request
+     * @param url
+     *            the test requested url to attempt to access
+     * @return the logout page
+     * @throws Exception
+     */
+    public Page invokeAppReturnPostLogoutPage(WebClient webClient, String url, Map<String, String> extraParms) throws Exception {
+
+        return invokeApp(webClient, url, CommonExpectations.successfullyReachedPostLogoutPage(extraParms));
+
+    }
+
+    /**
+     * Invoke the requested app - and ensure that we landed on the test endSession app (with/without a logout redirect, we won't get past the test endSession)
+     *
+     * @param webClient
+     *            the webClient to use to make the request
+     * @param url
+     *            the test requested url to attempt to access
+     * @return the logout page
+     * @throws Exception
+     */
+    public Page invokeAppReturnTestEndSessionPage(WebClient webClient, String url, boolean willRedirect) throws Exception {
+
+        return invokeApp(webClient, url, CommonExpectations.successfullyReachedTestEndSessiontPage(rpHttpsBase, willRedirect));
 
     }
 
@@ -352,7 +386,10 @@ public class CommonAnnotatedSecurityTests extends CommonSecurityFat {
         // confirm protected resource was accessed
         validationUtils.validateResult(response, currentExpectations);
 //        validateTheSameContext(ServletMessageConstants.CALLBACK, response);
-        validateTheSameContext(ServletMessageConstants.SERVLET, response);
+        // when simple servlet is used, we won't have an openidContext
+        if (!rspValues.getBaseApp().equals(Constants.DEFAULT_SERVLET)) {
+            validateTheSameContext(ServletMessageConstants.SERVLET, response);
+        }
 
         return response;
     }
@@ -366,7 +403,7 @@ public class CommonAnnotatedSecurityTests extends CommonSecurityFat {
                                                                                                                      + "OpenIdContext: null", "The context was null and should not have been"));
 
         processLoginexpectations.addExpectation(new ResponseFullExpectation(null, Constants.STRING_CONTAINS, ServletMessageConstants.HELLO_MSG
-                                                                                                             + ServletMessageConstants.BASE_SERVLET, "Did not land on the test app."));
+                                                                                                             + rspValues.getBaseApp(), "Did not land on the test app."));
         processLoginexpectations.addExpectation(new ResponseFullExpectation(null, Constants.STRING_CONTAINS, ServletMessageConstants.HELLO_MSG
                                                                                                              + app, "Did not land on the test app."));
 
@@ -533,6 +570,9 @@ public class CommonAnnotatedSecurityTests extends CommonSecurityFat {
         }
         if (value instanceof DisplayType) {
             newValue = ((DisplayType) value).toString();
+        }
+        if (value instanceof Integer) {
+            newValue = ((Integer) value).toString();
         }
         return newValue;
     }

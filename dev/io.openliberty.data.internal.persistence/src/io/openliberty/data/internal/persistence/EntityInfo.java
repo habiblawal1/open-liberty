@@ -13,7 +13,6 @@
 package io.openliberty.data.internal.persistence;
 
 import java.lang.reflect.Member;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +22,9 @@ import java.util.concurrent.CompletableFuture;
 import com.ibm.websphere.ras.annotation.Trivial;
 import com.ibm.wsspi.persistence.PersistenceServiceUnit;
 
-import jakarta.data.Inheritance;
-import jakarta.data.exceptions.DataException;
 import jakarta.data.exceptions.MappingException;
-import jakarta.data.repository.Pageable;
 import jakarta.data.repository.Sort;
+import jakarta.persistence.Inheritance;
 
 /**
  */
@@ -69,9 +66,7 @@ class EntityInfo {
         this.idClassAttributeAccessors = idClassAttributeAccessors;
         this.persister = persister;
 
-        inheritance = entityClass.getAnnotation(Inheritance.class) != null ||
-                      entityClass.getAnnotation(jakarta.persistence.Inheritance.class) != null;
-
+        inheritance = entityClass.getAnnotation(Inheritance.class) != null;
     }
 
     String getAttributeName(String name) {
@@ -97,7 +92,9 @@ class EntityInfo {
                     lowerName = lowerName.replace("_", "");
                     attributeName = attributeNames.get(lowerName);
                     if (attributeName == null)
-                        throw new MappingException("Entity class " + type.getName() + " does not have a property named " + name + "."); // TODO NLS
+                        throw new MappingException("Entity class " + type.getName() + " does not have a property named " + name +
+                                                   ". The following are valid property names for the entity: " +
+                                                   attributeTypes.keySet()); // TODO NLS
                 }
             }
 
@@ -109,53 +106,6 @@ class EntityInfo {
     }
 
     /**
-     * Adds dynamically specified Sort criteria to the end of an existing list, or
-     * if the list of dynamically specified Sort criteria doesn't already exist, this method creates it.
-     *
-     * @param current    existing list of sorts, or otherwise null.
-     * @param additional list to add from.
-     * @return the updated list that the sort criteria was added to.
-     */
-    @Trivial
-    List<Sort> getSorts(List<Sort> current, Sort... additional) {
-        boolean hasIdClass = idClass != null;
-        if (current == null)
-            current = new ArrayList<>();
-        for (Sort sort : additional) {
-            if (sort == null)
-                throw new DataException(new IllegalArgumentException("Sort: null"));
-            else if (hasIdClass && sort.property().equalsIgnoreCase("id"))
-                for (String name : idClassAttributeAccessors.keySet())
-                    current.add(getWithAttributeName(getAttributeName(name), sort));
-            else
-                current.add(getWithAttributeName(sort.property(), sort));
-        }
-        return current;
-    }
-
-    /**
-     * Obtains and processes sort criteria from pagination information.
-     *
-     * @param pagination pagination information.
-     * @return list of sort criteria.
-     */
-    @Trivial
-    List<Sort> getSorts(Pageable pagination) {
-        boolean hasIdClass = idClass != null;
-        List<Sort> sorts = new ArrayList<>();
-        for (Sort sort : pagination.sorts()) {
-            if (sort == null)
-                throw new DataException(new IllegalArgumentException("Sort: null"));
-            else if (hasIdClass && sort.property().equalsIgnoreCase("id"))
-                for (String name : idClassAttributeAccessors.keySet())
-                    sorts.add(getWithAttributeName(getAttributeName(name), sort));
-            else
-                sorts.add(getWithAttributeName(sort.property(), sort));
-        }
-        return sorts;
-    }
-
-    /**
      * Creates a Sort instance with the corresponding entity attribute name
      * or returns the existing instance if it already matches.
      *
@@ -164,7 +114,7 @@ class EntityInfo {
      * @return a Sort instance with the corresponding entity attribute name.
      */
     @Trivial
-    private Sort getWithAttributeName(String name, Sort sort) {
+    Sort getWithAttributeName(String name, Sort sort) {
         name = getAttributeName(name);
         if (name == sort.property())
             return sort;
@@ -184,5 +134,14 @@ class EntityInfo {
     static CompletableFuture<EntityInfo> newFuture(Class<?> entityClass) {
         // It's okay to use Java SE's CompletableFuture here given that *Async methods are never invoked on it
         return new CompletableFuture<>();
+    }
+
+    @Override
+    @Trivial
+    public String toString() {
+        return new StringBuilder("EntityInfo@").append(Integer.toHexString(hashCode())).append(' ') //
+                        .append(name).append(' ') //
+                        .append(attributeTypes.keySet()) //
+                        .toString();
     }
 }

@@ -46,6 +46,9 @@ import jakarta.enterprise.concurrent.Asynchronous;
  */
 @Repository
 public interface Primes {
+    @Query("SELECT (num.name) FROM Prime As num")
+    Slice<String> all(Pageable pagination);
+
     @Exists
     @Filter(by = "binary", op = Compare.EndsWith, param = "bits")
     @Filter(by = "number", op = Compare.LessThan, param = "max")
@@ -131,11 +134,19 @@ public interface Primes {
 
     Stream<Prime> findByNumberLessThan(long max);
 
+    @OrderBy("even")
+    @OrderBy("sumOfBits")
+    Page<Prime> findByNumberLessThan(long max, Pageable pagination);
+
     Streamable<Prime> findByNumberLessThanEqualOrderByNumberAsc(long max, Pageable pagination);
 
     Streamable<Prime> findByNumberLessThanEqualOrderByNumberDesc(long max, Limit limit);
 
     Page<Prime> findByNumberLessThanEqualOrderByNumberDesc(long max, Pageable pagination);
+
+    Stream<Prime> findByNumberLessThanOrderByEven(long max, Sort... sorts);
+
+    KeysetAwareSlice<Prime> findByNumberLessThanOrderByEvenAscSumOfBitsAsc(long max, Pageable pagination);
 
     @Asynchronous
     CompletionStage<KeysetAwarePage<Prime>> findByNumberLessThanOrderByNumberDesc(long max, Pageable pagination);
@@ -219,7 +230,7 @@ public interface Primes {
            count = "SELECT COUNT(p) FROM Prime p WHERE p.number <= ?1")
     Page<Map.Entry<Long, String>> namesByNumber(long maxNumber, Pageable pagination);
 
-    @Query("SELECT o.name, o.hex FROM Prime o WHERE o.number <= ?1")
+    @Query("SELECT prime.name, prime.hex FROM  Prime  prime  WHERE prime.number <= ?1")
     @OrderBy("number")
     Page<Object[]> namesWithHex(long maxNumber, Pageable pagination);
 
@@ -233,4 +244,9 @@ public interface Primes {
     Page<Integer> romanNumeralLengths(long maxNumber, Pageable pagination);
 
     void save(Prime... primes);
+
+    @Query("SELECT prime_ FROM Prime AS prime_ WHERE (prime_.number <= ?1)")
+    @OrderBy(value = "even", descending = true)
+    @OrderBy(value = "sumOfBits", descending = true)
+    KeysetAwarePage<Prime> upTo(long maxNumber, Pageable pagination);
 }

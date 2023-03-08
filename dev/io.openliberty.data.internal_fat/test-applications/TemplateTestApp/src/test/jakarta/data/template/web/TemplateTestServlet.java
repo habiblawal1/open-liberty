@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2022 IBM Corporation and others.
+ * Copyright (c) 2022,2023 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
@@ -13,6 +13,7 @@
 package test.jakarta.data.template.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.time.Duration;
@@ -59,6 +60,50 @@ public class TemplateTestServlet extends FATServlet {
     private UserTransaction tran;
 
     /**
+     * Unannotated entity with an attribute that is an embeddable type.
+     */
+    @Test
+    public void testEmbeddable() {
+        template.delete(House.class, "TestEmbeddable-304-2288-60");
+
+        House h = new House();
+        h.area = 1800;
+        h.garage = new Garage();
+        h.garage.area = 200;
+        h.garage.door = new GarageDoor();
+        h.garage.door.setHeight(8);
+        h.garage.door.setWidth(10);
+        h.garage.type = Garage.Type.Attached;
+        h.kitchen = new Kitchen();
+        h.kitchen.length = 15;
+        h.kitchen.width = 12;
+        h.lotSize = 0.19f;
+        h.numBedrooms = 4;
+        h.parcelId = "TestEmbeddable-304-2288-60";
+        h.purchasePrice = 162000;
+        h.sold = Year.of(2018);
+
+        h = template.insert(h);
+
+        Optional<House> found = template.find(House.class, "TestEmbeddable-304-2288-60");
+        h = found.get();
+
+        assertNotNull(h.kitchen);
+        assertEquals(15, h.kitchen.length);
+        assertEquals(12, h.kitchen.width);
+
+        assertNotNull(h.garage);
+        assertEquals(200, h.garage.area);
+        assertEquals(Garage.Type.Attached, h.garage.type);
+
+        assertNotNull(h.garage.door);
+        assertEquals(8, h.garage.door.getHeight());
+        assertEquals(10, h.garage.door.getWidth());
+
+        template.delete(House.class, "TestEmbeddable-304-2288-60");
+    }
+
+    /**
      * Uses a template to insert, update, find, and delete entities.
      */
     @Test
@@ -72,13 +117,13 @@ public class TemplateTestServlet extends FATServlet {
         h1.area = 1500;
         h1.lotSize = 0.18f;
         h1.numBedrooms = 3;
-        h1.parcel = "001-203-401";
+        h1.parcelId = "001-203-401";
         h1.purchasePrice = 125000.00f;
         h1.sold = Year.of(2015);
 
         House h = template.insert(h1);
 
-        assertEquals("001-203-401", h.parcel);
+        assertEquals("001-203-401", h.parcelId);
 
         // update
         h1.numBedrooms = 4;
@@ -90,7 +135,7 @@ public class TemplateTestServlet extends FATServlet {
         assertEquals(1500, h.area);
         assertEquals(0.18f, h.lotSize, 0.001f);
         assertEquals(4, h.numBedrooms);
-        assertEquals("001-203-401", h.parcel);
+        assertEquals("001-203-401", h.parcelId);
         assertEquals(136000.00f, h.purchasePrice, 0.001f);
         assertEquals(Year.of(2016), h.sold);
 
@@ -99,7 +144,7 @@ public class TemplateTestServlet extends FATServlet {
         h2.area = 1200;
         h2.lotSize = 0.21f;
         h2.numBedrooms = 2;
-        h2.parcel = "001-203-402";
+        h2.parcelId = "001-203-402";
         h2.purchasePrice = 112000.00f;
         h2.sold = Year.of(2012);
 
@@ -107,7 +152,7 @@ public class TemplateTestServlet extends FATServlet {
         h3.area = 1300;
         h3.lotSize = 0.13f;
         h3.numBedrooms = 3;
-        h3.parcel = "001-203-403";
+        h3.parcelId = "001-203-403";
         h3.purchasePrice = 113000.00f;
         h3.sold = Year.of(2013);
 
@@ -115,9 +160,9 @@ public class TemplateTestServlet extends FATServlet {
 
         Iterator<House> i = inserted.iterator();
         assertEquals(true, i.hasNext());
-        assertEquals(h2.parcel, i.next().parcel);
+        assertEquals(h2.parcelId, i.next().parcelId);
         assertEquals(true, i.hasNext());
-        assertEquals(h3.parcel, i.next().parcel);
+        assertEquals(h3.parcelId, i.next().parcelId);
         assertEquals(false, i.hasNext());
 
         // attempt to insert duplicate
@@ -131,13 +176,13 @@ public class TemplateTestServlet extends FATServlet {
         }
 
         // find
-        found = template.find(House.class, h1.parcel);
+        found = template.find(House.class, h1.parcelId);
 
         h = found.get();
         assertEquals(h1.area, h.area);
         assertEquals(h1.lotSize, h.lotSize, 0.001f);
         assertEquals(h1.numBedrooms, h.numBedrooms);
-        assertEquals(h1.parcel, h.parcel);
+        assertEquals(h1.parcelId, h.parcelId);
         assertEquals(h1.purchasePrice, h.purchasePrice, 0.001f);
         assertEquals(h1.sold, h.sold);
 
@@ -158,14 +203,14 @@ public class TemplateTestServlet extends FATServlet {
         assertEquals(false, u.hasNext());
 
         // delete
-        template.delete(House.class, h1.parcel);
+        template.delete(House.class, h1.parcelId);
 
         // find none
-        found = template.find(House.class, h1.parcel);
+        found = template.find(House.class, h1.parcelId);
         assertEquals(true, found.isEmpty());
 
         // delete nothing
-        template.delete(House.class, h1.parcel);
+        template.delete(House.class, h1.parcelId);
     }
 
     /**
@@ -178,21 +223,21 @@ public class TemplateTestServlet extends FATServlet {
         v1.model = "Accord";
         v1.numSeats = 5;
         v1.price = 26000f;
-        v1.vin = "TE201234567890001";
+        v1.vinId = "TE201234567890001";
 
         Vehicle v2 = new Vehicle();
         v2.make = "Ford";
         v2.model = "F-150";
         v2.numSeats = 3;
         v2.price = 32000f;
-        v2.vin = "TE201234567890002";
+        v2.vinId = "TE201234567890002";
 
         Vehicle v3 = new Vehicle();
         v3.make = "Toyota";
         v3.model = "Camry";
         v3.numSeats = 5;
         v3.price = 25000f;
-        v3.vin = "TE201234567890003";
+        v3.vinId = "TE201234567890003";
 
         // insert multiple with time-to-live
         Iterable<Vehicle> inserted = template.insert(List.of(v1, v2, v3), Duration.of(150, ChronoUnit.SECONDS));
@@ -206,16 +251,16 @@ public class TemplateTestServlet extends FATServlet {
         assertEquals(false, i.hasNext());
 
         // delete
-        template.delete(Vehicle.class, v1.vin);
+        template.delete(Vehicle.class, v1.vinId);
 
         // find none
-        Optional<Vehicle> found = template.find(Vehicle.class, v1.vin);
+        Optional<Vehicle> found = template.find(Vehicle.class, v1.vinId);
         assertEquals(false, found.isPresent());
 
         // update
         v3.price += 500f;
         v3 = template.update(v3);
-        assertEquals("TE201234567890003", v3.vin);
+        assertEquals("TE201234567890003", v3.vinId);
 
         // find
         found = template.find(Vehicle.class, "TE201234567890003");
@@ -232,7 +277,7 @@ public class TemplateTestServlet extends FATServlet {
         h1.area = 1900;
         h1.lotSize = 0.19f;
         h1.numBedrooms = 4;
-        h1.parcel = "111-222-333";
+        h1.parcelId = "111-222-333";
         h1.purchasePrice = 219000.00f;
         h1.sold = Year.of(2019);
 
@@ -241,7 +286,7 @@ public class TemplateTestServlet extends FATServlet {
         v1.model = "Altima";
         v1.numSeats = 5;
         v1.price = 24000f;
-        v1.vin = "TME09876543210001";
+        v1.vinId = "TME09876543210001";
 
         Iterable<Object> inserted = template.insert(List.of(h1, v1));
         Iterator<Object> i = inserted.iterator();
@@ -282,7 +327,7 @@ public class TemplateTestServlet extends FATServlet {
         h1.area = 1800;
         h1.lotSize = 0.17f;
         h1.numBedrooms = 3;
-        h1.parcel = "765-432-001";
+        h1.parcelId = "765-432-001";
         h1.purchasePrice = 141000.00f;
         h1.sold = Year.of(2014);
 
@@ -290,7 +335,7 @@ public class TemplateTestServlet extends FATServlet {
         h2.area = 1800;
         h2.lotSize = 0.17f;
         h2.numBedrooms = 3;
-        h2.parcel = "765-432-001";
+        h2.parcelId = "765-432-001";
         h2.purchasePrice = 142000.00f; // differs from previous here
         h2.sold = Year.of(2014);
 

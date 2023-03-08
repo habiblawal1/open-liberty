@@ -6,14 +6,12 @@
  * http://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package io.openliberty.microprofile.telemetry.internal_fat;
 
 import static com.ibm.websphere.simplicity.ShrinkHelper.DeployOptions.SERVER_ONLY;
 import static org.junit.Assert.assertFalse;
+
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -129,7 +127,7 @@ public class TelemetryMisconfigTest extends FATServletClient {
     public void testInvalidExporter() throws Exception {
         server.setMarkToEndOfLog();
 
-        String createSpan = new HttpRequest(server, "/" + INVALID_EXPORTER_APP_NAME + "/misconfig/jaxrsclient")
+        new HttpRequest(server, "/" + INVALID_EXPORTER_APP_NAME + "/misconfig/jaxrsclient")
                         .expectCode(500)
                         .run(String.class);
 
@@ -141,7 +139,7 @@ public class TelemetryMisconfigTest extends FATServletClient {
     public void testInvalidJaegerExporterEndpoint() throws Exception {
         server.setMarkToEndOfLog();
 
-        String createSpan = new HttpRequest(server, "/" + INVALID_JAEGER_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
+        new HttpRequest(server, "/" + INVALID_JAEGER_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
                         .expectCode(500)
                         .run(String.class);
 
@@ -154,7 +152,7 @@ public class TelemetryMisconfigTest extends FATServletClient {
     public void testInvalidZipkinExporterEndpoint() throws Exception {
         server.setMarkToEndOfLog();
 
-        String createSpan = new HttpRequest(server, "/" + INVALID_ZIPKIN_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
+        new HttpRequest(server, "/" + INVALID_ZIPKIN_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
                         .expectCode(500)
                         .run(String.class);
 
@@ -166,7 +164,7 @@ public class TelemetryMisconfigTest extends FATServletClient {
     public void testInvalidOtlpExporterEndpoint() throws Exception {
         server.setMarkToEndOfLog();
 
-        String createSpan = new HttpRequest(server, "/" + INVALID_OTLP_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
+        new HttpRequest(server, "/" + INVALID_OTLP_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
                         .expectCode(500)
                         .run(String.class);
 
@@ -177,11 +175,11 @@ public class TelemetryMisconfigTest extends FATServletClient {
     public void testNotKnownEndpoint() throws Exception {
         server.setMarkToEndOfLog();
 
-        String createSpan = new HttpRequest(server, "/" + NOT_KNOWN_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
+        new HttpRequest(server, "/" + NOT_KNOWN_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
                         .expectCode(200)
                         .run(String.class);
 
-        assertFalse(server.waitForStringInLogUsingMark("Failed to export spans. The request could not be executed. Full error message: " + INVALID_JAEGER_ENDPOINT.toLowerCase())
+        assertFalse(server.waitForStringInLogUsingMark("Failed to export spans. The request could not be executed. Full error message:.*" + INVALID_JAEGER_ENDPOINT.toLowerCase())
                         .isEmpty());
     }
 
@@ -189,7 +187,7 @@ public class TelemetryMisconfigTest extends FATServletClient {
     public void testDoesNotExistEndpoint() throws Exception {
         server.setMarkToEndOfLog();
 
-        String createSpan = new HttpRequest(server, "/" + DOES_NOT_EXIST_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
+        new HttpRequest(server, "/" + DOES_NOT_EXIST_ENDPOINT_APP_NAME + "/misconfig/jaxrsclient")
                         .expectCode(200)
                         .run(String.class);
 
@@ -202,7 +200,7 @@ public class TelemetryMisconfigTest extends FATServletClient {
     public void testInvalidJaegerTimeout() throws Exception {
         server.setMarkToEndOfLog();
 
-        String createSpan = new HttpRequest(server, "/" + INVALID_JAEGER_TIMEOUT_APP_NAME + "/misconfig/jaxrsclient")
+        new HttpRequest(server, "/" + INVALID_JAEGER_TIMEOUT_APP_NAME + "/misconfig/jaxrsclient")
                         .expectCode(500)
                         .run(String.class);
 

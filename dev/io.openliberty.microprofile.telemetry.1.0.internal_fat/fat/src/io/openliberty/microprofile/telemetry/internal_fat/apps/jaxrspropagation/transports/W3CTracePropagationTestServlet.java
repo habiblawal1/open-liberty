@@ -13,7 +13,6 @@ import static io.openliberty.microprofile.telemetry.internal_fat.apps.jaxrspropa
 import static io.openliberty.microprofile.telemetry.internal_fat.apps.jaxrspropagation.common.PropagationHeaderEndpoint.BAGGAGE_METADATA_ATTR;
 import static io.openliberty.microprofile.telemetry.internal_fat.apps.jaxrspropagation.common.PropagationHeaderEndpoint.BAGGAGE_VALUE_ATTR;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
@@ -26,6 +25,7 @@ import org.junit.Test;
 import componenttest.app.FATServlet;
 import io.openliberty.microprofile.telemetry.internal_fat.apps.jaxrspropagation.common.PropagationHeaderClient;
 import io.openliberty.microprofile.telemetry.internal_fat.apps.jaxrspropagation.common.PropagationHeaderEndpoint;
+import io.openliberty.microprofile.telemetry.internal_fat.common.TestSpans;
 import io.openliberty.microprofile.telemetry.internal_fat.common.spanexporter.InMemorySpanExporter;
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.baggage.BaggageEntryMetadata;
@@ -53,28 +53,26 @@ public class W3CTracePropagationTestServlet extends FATServlet {
     @Inject
     private HttpServletRequest request;
 
+    @Inject
+    private TestSpans testSpans;
+
     @Test
     public void testW3cTracePropagation() throws URISyntaxException {
-        Span span = tracer.spanBuilder("test").startSpan();
-        try (Scope scope = span.makeCurrent()) {
+        Span span = testSpans.withTestSpan(() -> {
             Baggage baggage = Baggage.builder().put(BAGGAGE_KEY, BAGGAGE_VALUE, BaggageEntryMetadata.create(BAGGAGE_METADATA)).build();
-            baggage.makeCurrent();
-            PropagationHeaderClient client = RestClientBuilder.newBuilder().baseUri(PropagationHeaderEndpoint.getBaseUri(request)).build(PropagationHeaderClient.class);
-            client.get();
-        } finally {
-            span.end();
-        }
+            try (Scope s = baggage.makeCurrent()) {
+                PropagationHeaderClient client = RestClientBuilder.newBuilder().baseUri(PropagationHeaderEndpoint.getBaseUri(request)).build(PropagationHeaderClient.class);
+                client.get();
+            }
+        });
 
-        List<SpanData> spanData = spanExporter.getFinishedSpanItems(3);
-
-        SpanData testSpan = spanData.get(0);
-        SpanData clientSpan = spanData.get(1);
-        SpanData serverSpan = spanData.get(2);
+        List<SpanData> spanData = spanExporter.getFinishedSpanItems(3, span);
 
         // Assert correct parent-child links
         // Shows that propagation occurred
-        assertEquals("client parent span id", testSpan.getSpanId(), clientSpan.getParentSpanId());
-        assertEquals("server parent span id", clientSpan.getSpanId(), serverSpan.getParentSpanId());
+        TestSpans.assertLinearParentage(spanData);
+
+        SpanData serverSpan = spanData.get(2);
 
         // Baggage is not propagated if only tracecontext is enabled
         assertNull("baggage value propagated", serverSpan.getAttributes().get(BAGGAGE_VALUE_ATTR));
