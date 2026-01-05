@@ -48,6 +48,7 @@ import io.openliberty.mcp.internal.fat.tool.EncoderTest;
 import io.openliberty.mcp.internal.fat.tool.GenericToolTest;
 import io.openliberty.mcp.internal.fat.tool.InactiveCdiTest;
 import io.openliberty.mcp.internal.fat.tool.McpUrlPathTest;
+import io.openliberty.mcp.internal.fat.tool.MetricTest;
 import io.openliberty.mcp.internal.fat.tool.NoParamNameTest;
 import io.openliberty.mcp.internal.fat.tool.NonRequiredArgsToolsTest;
 import io.openliberty.mcp.internal.fat.tool.ToolErrorHandlingTest;
@@ -71,6 +72,7 @@ import io.openliberty.mcp.internal.fat.tool.ToolTest;
                 InactiveCdiTest.class,
                 IntrospectorMultiAppTest.class,
                 LifecycleTest.class,
+                MetricTest.class,
                 McpUrlPathTest.class,
                 NonRequiredArgsToolsTest.class,
                 NoParamNameTest.class,

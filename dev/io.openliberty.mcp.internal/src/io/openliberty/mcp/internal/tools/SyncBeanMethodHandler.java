@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2025 IBM Corporation and others.
+ * Copyright (c) 2025, 2026 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import io.openliberty.mcp.internal.exceptions.jsonrpc.JSONRPCErrorCode;
 import io.openliberty.mcp.internal.exceptions.jsonrpc.JSONRPCException;
 import io.openliberty.mcp.internal.tools.ToolManager.ToolArguments;
 import io.openliberty.mcp.internal.tools.ToolManager.ToolDefinition;
+import io.openliberty.mcp.metrics.McpMetricRecorder;
 import io.openliberty.mcp.tools.ToolResponse;
 import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.inject.spi.BeanManager;
@@ -33,8 +34,8 @@ public class SyncBeanMethodHandler extends BeanMethodHandler<ToolResponse> {
      * @param bm the bean manager to use to look up the bean
      * @param method metadata about the method to call
      */
-    public SyncBeanMethodHandler(Jsonb jsonb, BeanManager bm, MethodMetadata method) {
-        super(jsonb, bm, method);
+    public SyncBeanMethodHandler(Jsonb jsonb, BeanManager bm, MethodMetadata method, McpMetricRecorder metricRecorder) {
+        super(jsonb, bm, method, metricRecorder);
     }
 
     @Override
@@ -49,6 +50,8 @@ public class SyncBeanMethodHandler extends BeanMethodHandler<ToolResponse> {
             Object result;
             try {
                 // Call the tool method
+                if (metricRecorder != null)
+                    metricRecorder.incrementToolCallCount(); // Record the tool call for telemetry metrics
                 result = method.method().invoke(beanInstance, argsArray);
             } catch (IllegalAccessException e) {
                 throw new JSONRPCException(JSONRPCErrorCode.INTERNAL_ERROR, List.of("Could not call " + method.name()));
