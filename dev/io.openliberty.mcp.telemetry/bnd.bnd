@@ -53,5 +53,3 @@ Private-Package: \
     com.ibm.ws.org.osgi.annotation.versioning;version=latest, \
     io.opentelemetry:opentelemetry-api;version='${openTelemetryVersion}';strategy=exact, \
     io.openliberty.microprofile.telemetry.internal.common;version=latest
-
-io.openliberty.mcpServer-1.0-mpTelemetry-2.0.feature
