@@ -35,7 +35,7 @@ public class McpMetricServlet extends FATServlet {
         Optional<MetricData> getMetricAttributes = getMetricData("mcp.server.operation.duration");
         assertTrue("mcp.server.operation.duration metric not found", getMetricAttributes.isPresent());
 
-        System.out.println(getMetricAttributes.get());
+        System.out.println("**HABIBLAWAL** -> " + getMetricAttributes.get().getHistogramData().getPoints());
 
         List<HistogramPointData> basicToolAttributesList = getToolMetricAttributes(getMetricAttributes.get(), "basicTool");
         assertTrue("No attributes with the tool name 'basicTool'", basicToolAttributesList.size() == 1);
@@ -60,6 +60,7 @@ public class McpMetricServlet extends FATServlet {
         assertTrue("mcp.server.operation.duration metric not found", getMetricAttributes.isPresent());
 
         List<HistogramPointData> advancedToolAttributesList = getToolMetricAttributes(getMetricAttributes.get(), "advancedTool");
+        //TODO use assertEquals as if the size is more than 1 than the error msg makes no sense
         assertTrue("No attributes with the tool name 'advancedTool'", advancedToolAttributesList.size() == 1);
 
         // Test tool call count is correct
@@ -74,6 +75,14 @@ public class McpMetricServlet extends FATServlet {
         assertEquals("HTTP", advancedToolAttributes.get(AttributeKey.stringKey("network.protocol.name")));
         assertEquals("1.1", advancedToolAttributes.get(AttributeKey.stringKey("network.protocol.version")));
         assertEquals("tcp", advancedToolAttributes.get(AttributeKey.stringKey("network.transport")));
+        /**
+         * TODO
+         * Add at least 1 timed check
+         * Check if error tags exist or not
+         * Stream for specific attributes to simplify code so you can easily check the value of any attributes
+         * Add a method to check invariant attributes to test the ones that don't change and maybe one to test things
+         * that sometimes change e.g mcpProtocolVersion
+         */
 
     }
 

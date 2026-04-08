@@ -14,149 +14,171 @@
  *******************************************************************************/
 package io.openliberty.microprofile.metrics50.mcp.attributes;
 
-import static io.opentelemetry.api.common.AttributeKey.longKey;
-import static io.opentelemetry.api.common.AttributeKey.stringKey;
-
-import io.opentelemetry.api.common.AttributeKey;
-
 // DO NOT EDIT, this is an Auto-generated file from
 // buildscripts/templates/registry/incubating_java/IncubatingSemanticAttributes.java.j2
 @SuppressWarnings("unused")
 public final class NetworkIncubatingAttributes {
-    /** The ISO 3166-1 alpha-2 2-character country code associated with the mobile carrier network. */
-    public static final AttributeKey<String> NETWORK_CARRIER_ICC = stringKey("network.carrier.icc");
+    /**
+     * The ISO 3166-1 alpha-2 2-character country code associated with the mobile
+     * carrier network.
+     */
+    public static final String NETWORK_CARRIER_ICC = "network.carrier.icc";
 
     /** The mobile carrier country code. */
-    public static final AttributeKey<String> NETWORK_CARRIER_MCC = stringKey("network.carrier.mcc");
+    public static final String NETWORK_CARRIER_MCC = "network.carrier.mcc";
 
     /** The mobile carrier network code. */
-    public static final AttributeKey<String> NETWORK_CARRIER_MNC = stringKey("network.carrier.mnc");
+    public static final String NETWORK_CARRIER_MNC = "network.carrier.mnc";
 
     /** The name of the mobile carrier. */
-    public static final AttributeKey<String> NETWORK_CARRIER_NAME = stringKey("network.carrier.name");
+    public static final String NETWORK_CARRIER_NAME = "network.carrier.name";
 
     /**
      * The state of network connection
      *
-     * <p>Notes:
+     * <p>
+     * Notes:
      *
-     * <p>Connection states are defined as part of the <a
-     * href="https://datatracker.ietf.org/doc/html/rfc9293#section-3.3.2">rfc9293</a>
+     * <p>
+     * Connection states are defined as part of the <a href=
+     * "https://datatracker.ietf.org/doc/html/rfc9293#section-3.3.2">rfc9293</a>
      */
-    public static final AttributeKey<String> NETWORK_CONNECTION_STATE = stringKey("network.connection.state");
+    public static final String NETWORK_CONNECTION_STATE = "network.connection.state";
 
     /**
-     * This describes more details regarding the connection.type. It may be the type of cell
-     * technology connection, but it could be used for describing details about a wifi connection.
+     * This describes more details regarding the connection.type. It may be the type
+     * of cell technology connection, but it could be used for describing details
+     * about a wifi connection.
      */
-    public static final AttributeKey<String> NETWORK_CONNECTION_SUBTYPE = stringKey("network.connection.subtype");
+    public static final String NETWORK_CONNECTION_SUBTYPE = "network.connection.subtype";
 
     /** The internet connection type. */
-    public static final AttributeKey<String> NETWORK_CONNECTION_TYPE = stringKey("network.connection.type");
+    public static final String NETWORK_CONNECTION_TYPE = "network.connection.type";
 
     /** The network interface name. */
-    public static final AttributeKey<String> NETWORK_INTERFACE_NAME = stringKey("network.interface.name");
+    public static final String NETWORK_INTERFACE_NAME = "network.interface.name";
 
     /** The network IO operation direction. */
-    public static final AttributeKey<String> NETWORK_IO_DIRECTION = stringKey("network.io.direction");
+    public static final String NETWORK_IO_DIRECTION = "network.io.direction";
 
     /**
-     * Local address of the network connection - IP address or Unix domain socket name.
+     * Local address of the network connection - IP address or Unix domain socket
+     * name.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes#NETWORK_LOCAL_ADDRESS} attribute.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes#NETWORK_LOCAL_ADDRESS}
+     *             attribute.
      */
     @Deprecated
-    public static final AttributeKey<String> NETWORK_LOCAL_ADDRESS = stringKey("network.local.address");
+    public static final String NETWORK_LOCAL_ADDRESS = "network.local.address";
 
     /**
      * Local port number of the network connection.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes#NETWORK_LOCAL_PORT} attribute.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes#NETWORK_LOCAL_PORT}
+     *             attribute.
      */
     @Deprecated
-    public static final AttributeKey<Long> NETWORK_LOCAL_PORT = longKey("network.local.port");
+    public static final String NETWORK_LOCAL_PORT = "network.local.port";
 
     /**
-     * Peer address of the network connection - IP address or Unix domain socket name.
+     * Peer address of the network connection - IP address or Unix domain socket
+     * name.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes#NETWORK_PEER_ADDRESS} attribute.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes#NETWORK_PEER_ADDRESS}
+     *             attribute.
      */
     @Deprecated
-    public static final AttributeKey<String> NETWORK_PEER_ADDRESS = stringKey("network.peer.address");
+    public static final String NETWORK_PEER_ADDRESS = "network.peer.address";
 
     /**
      * Peer port number of the network connection.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes#NETWORK_PEER_PORT} attribute.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes#NETWORK_PEER_PORT}
+     *             attribute.
      */
     @Deprecated
-    public static final AttributeKey<Long> NETWORK_PEER_PORT = longKey("network.peer.port");
+    public static final String NETWORK_PEER_PORT = "network.peer.port";
 
     /**
-     * <a href="https://wikipedia.org/wiki/Application_layer">OSI application layer</a> or non-OSI
-     * equivalent.
+     * <a href="https://wikipedia.org/wiki/Application_layer">OSI application
+     * layer</a> or non-OSI equivalent.
      *
-     * <p>Notes:
+     * <p>
+     * Notes:
      *
-     * <p>The value SHOULD be normalized to lowercase.
+     * <p>
+     * The value SHOULD be normalized to lowercase.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes#NETWORK_PROTOCOL_NAME} attribute.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes#NETWORK_PROTOCOL_NAME}
+     *             attribute.
      */
     @Deprecated
-    public static final AttributeKey<String> NETWORK_PROTOCOL_NAME = stringKey("network.protocol.name");
+    public static final String NETWORK_PROTOCOL_NAME = "network.protocol.name";
 
     /**
      * The actual version of the protocol used for network communication.
      *
-     * <p>Notes:
+     * <p>
+     * Notes:
      *
-     * <p>If protocol version is subject to negotiation (for example using <a
-     * href="https://www.rfc-editor.org/rfc/rfc7301.html">ALPN</a>), this attribute SHOULD be set to
-     * the negotiated version. If the actual protocol version is not known, this attribute SHOULD NOT
-     * be set.
+     * <p>
+     * If protocol version is subject to negotiation (for example using
+     * <a href="https://www.rfc-editor.org/rfc/rfc7301.html">ALPN</a>), this
+     * attribute SHOULD be set to the negotiated version. If the actual protocol
+     * version is not known, this attribute SHOULD NOT be set.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes#NETWORK_PROTOCOL_VERSION} attribute.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes#NETWORK_PROTOCOL_VERSION}
+     *             attribute.
      */
     @Deprecated
-    public static final AttributeKey<String> NETWORK_PROTOCOL_VERSION = stringKey("network.protocol.version");
+    public static final String NETWORK_PROTOCOL_VERSION = "network.protocol.version";
 
     /**
-     * <a href="https://wikipedia.org/wiki/Transport_layer">OSI transport layer</a> or <a
-     * href="https://wikipedia.org/wiki/Inter-process_communication">inter-process communication
-     * method</a>.
+     * <a href="https://wikipedia.org/wiki/Transport_layer">OSI transport layer</a>
+     * or <a href=
+     * "https://wikipedia.org/wiki/Inter-process_communication">inter-process
+     * communication method</a>.
      *
-     * <p>Notes:
+     * <p>
+     * Notes:
      *
-     * <p>The value SHOULD be normalized to lowercase.
+     * <p>
+     * The value SHOULD be normalized to lowercase.
      *
-     * <p>Consider always setting the transport when setting a port number, since a port number is
-     * ambiguous without knowing the transport. For example different processes could be listening on
-     * TCP port 12345 and UDP port 12345.
+     * <p>
+     * Consider always setting the transport when setting a port number, since a
+     * port number is ambiguous without knowing the transport. For example different
+     * processes could be listening on TCP port 12345 and UDP port 12345.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes#NETWORK_TRANSPORT} attribute.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes#NETWORK_TRANSPORT}
+     *             attribute.
      */
     @Deprecated
-    public static final AttributeKey<String> NETWORK_TRANSPORT = stringKey("network.transport");
+    public static final String NETWORK_TRANSPORT = "network.transport";
 
     /**
-     * <a href="https://wikipedia.org/wiki/Network_layer">OSI network layer</a> or non-OSI equivalent.
+     * <a href="https://wikipedia.org/wiki/Network_layer">OSI network layer</a> or
+     * non-OSI equivalent.
      *
-     * <p>Notes:
+     * <p>
+     * Notes:
      *
-     * <p>The value SHOULD be normalized to lowercase.
+     * <p>
+     * The value SHOULD be normalized to lowercase.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes#NETWORK_TYPE} attribute.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes#NETWORK_TYPE}
+     *             attribute.
      */
     @Deprecated
-    public static final AttributeKey<String> NETWORK_TYPE = stringKey("network.type");
+    public static final String NETWORK_TYPE = "network.type";
 
     // Enum definitions
 
@@ -304,24 +326,29 @@ public final class NetworkIncubatingAttributes {
     /**
      * Values for {@link #NETWORK_TRANSPORT}.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes.NetworkTransportValues}.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes.NetworkTransportValues}.
      */
     @Deprecated
     public static final class NetworkTransportIncubatingValues {
         /** TCP */
+        @Deprecated
         public static final String TCP = "tcp";
 
         /** UDP */
+        @Deprecated
         public static final String UDP = "udp";
 
         /** Named or anonymous pipe. */
+        @Deprecated
         public static final String PIPE = "pipe";
 
         /** Unix domain socket */
+        @Deprecated
         public static final String UNIX = "unix";
 
         /** QUIC */
+        @Deprecated
         public static final String QUIC = "quic";
 
         private NetworkTransportIncubatingValues() {
@@ -331,15 +358,17 @@ public final class NetworkIncubatingAttributes {
     /**
      * Values for {@link #NETWORK_TYPE}.
      *
-     * @deprecated deprecated in favor of stable {@link
-     *             io.opentelemetry.semconv.NetworkAttributes.NetworkTypeValues}.
+     * @deprecated deprecated in favor of stable
+     *             {@link io.opentelemetry.semconv.NetworkAttributes.NetworkTypeValues}.
      */
     @Deprecated
     public static final class NetworkTypeIncubatingValues {
         /** IPv4 */
+        @Deprecated
         public static final String IPV4 = "ipv4";
 
         /** IPv6 */
+        @Deprecated
         public static final String IPV6 = "ipv6";
 
         private NetworkTypeIncubatingValues() {

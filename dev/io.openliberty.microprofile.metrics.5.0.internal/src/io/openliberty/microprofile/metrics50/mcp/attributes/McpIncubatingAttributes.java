@@ -14,40 +14,41 @@
  *******************************************************************************/
 package io.openliberty.microprofile.metrics50.mcp.attributes;
 
-import static io.opentelemetry.api.common.AttributeKey.stringKey;
-
-import io.opentelemetry.api.common.AttributeKey;
-
 // DO NOT EDIT, this is an Auto-generated file from
 // buildscripts/templates/registry/incubating_java/IncubatingSemanticAttributes.java.j2
 @SuppressWarnings("unused")
 public final class McpIncubatingAttributes {
     /** The name of the request or notification method. */
-    public static final AttributeKey<String> MCP_METHOD_NAME = stringKey("mcp.method.name");
+    public static final String MCP_METHOD_NAME = "mcp.method.name";
 
     /**
-     * The <a href="https://modelcontextprotocol.io/specification/versioning">version</a> of the Model
-     * Context Protocol used.
+     * The <a href=
+     * "https://modelcontextprotocol.io/specification/versioning">version</a> of the
+     * Model Context Protocol used.
      */
-    public static final AttributeKey<String> MCP_PROTOCOL_VERSION = stringKey("mcp.protocol.version");
+    public static final String MCP_PROTOCOL_VERSION = "mcp.protocol.version";
 
     /**
      * The value of the resource uri.
      *
-     * <p>Notes:
+     * <p>
+     * Notes:
      *
-     * <p>This is a URI of the resource provided in the following requests or notifications: {@code
-     * resources/read}, {@code resources/subscribe}, {@code resources/unsubscribe}, or {@code
+     * <p>
+     * This is a URI of the resource provided in the following requests or
+     * notifications: {@code
+     * resources/read}, {@code resources/subscribe}, {@code resources/unsubscribe},
+     * or {@code
      * notifications/resources/updated}.
      */
-    public static final AttributeKey<String> MCP_RESOURCE_URI = stringKey("mcp.resource.uri");
+    public static final String MCP_RESOURCE_URI = "mcp.resource.uri";
 
     /**
-     * Identifies <a
-     * href="https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#session-management">MCP
+     * Identifies <a href=
+     * "https://modelcontextprotocol.io/specification/2025-06-18/basic/transports#session-management">MCP
      * session</a>.
      */
-    public static final AttributeKey<String> MCP_SESSION_ID = stringKey("mcp.session.id");
+    public static final String MCP_SESSION_ID = "mcp.session.id";
 
     // Enum definitions
 
@@ -125,7 +126,10 @@ public final class McpIncubatingAttributes {
         /** Notification indicating that the list of roots has changed. */
         public static final String NOTIFICATIONS_ROOTS_LIST_CHANGED = "notifications/roots/list_changed";
 
-        /** Request from the server to elicit additional information from the user via the client */
+        /**
+         * Request from the server to elicit additional information from the user via
+         * the client
+         */
         public static final String ELICITATION_CREATE = "elicitation/create";
 
         private McpMethodNameIncubatingValues() {

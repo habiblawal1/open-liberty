@@ -1,18 +1,14 @@
-/*******************************************************************************
- * Copyright (c) 2026 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License 2.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-2.0/
- *
- * SPDX-License-Identifier: EPL-2.0
- *******************************************************************************/
 package io.openliberty.mcp.internal.fat.tool;
 
 import static com.ibm.websphere.simplicity.ShrinkHelper.DeployOptions.SERVER_ONLY;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -27,16 +23,15 @@ import componenttest.annotation.Server;
 import componenttest.custom.junit.runner.FATRunner;
 import componenttest.topology.impl.LibertyServer;
 import componenttest.topology.utils.FATServletClient;
-import io.openliberty.mcp.internal.fat.observability.telemetry.PullExporterAutoConfigurationCustomizerProvider;
+import io.openliberty.mcp.internal.fat.observability.mpmetrics.McpMetricBeanMpMetric;
 import io.openliberty.mcp.internal.fat.utils.McpClient;
-import io.opentelemetry.sdk.autoconfigure.spi.AutoConfigurationCustomizerProvider;
 
 @RunWith(FATRunner.class)
-public class TelemetryTest extends FATServletClient {
+public class MpMetricsTest extends FATServletClient {
 
-    private final static String APP_NAME = "telemetryTest";
+    private final static String APP_NAME = "mpMetricTest";
 
-    @Server("mcp-server-telemetry")
+    @Server("mcp-server-mpmetrics")
     public static LibertyServer server;
 
     @Rule
@@ -69,14 +64,7 @@ public class TelemetryTest extends FATServletClient {
     @BeforeClass
     public static void setup() throws Exception {
         WebArchive war = ShrinkWrap.create(WebArchive.class, APP_NAME + ".war")
-                                   .addPackage(PullExporterAutoConfigurationCustomizerProvider.class.getPackage())
-                                   .addAsResource(new StringAsset("otel.sdk.disabled=false"),
-                                                  "META-INF/microprofile-config.properties")
-                                   .addAsServiceProvider(AutoConfigurationCustomizerProvider.class,
-                                                         PullExporterAutoConfigurationCustomizerProvider.class);
-
-//        WebArchive war2 = ShrinkWrap.create(WebArchive.class, APP_NAME + ".war")
-//                                    .addPackage(McpMetricBean1.class.getPackage());
+                                   .addPackage(McpMetricBeanMpMetric.class.getPackage());
 
         ShrinkHelper.exportDropinAppToServer(server, war, SERVER_ONLY);
 
@@ -96,12 +84,46 @@ public class TelemetryTest extends FATServletClient {
                         """;
         JSONAssert.assertEquals(expectedResponseString, response, true);
 
+        String metric = requestHttpServlet(server);
+        System.out.println("**HABIBLAWAL** Metric URL Output -> " + metric);
+
         client.callMCP(ADVANCED_TOOL_REQUEST);
         client.callMCP(ADVANCED_TOOL_REQUEST);
 
         // Run servlet tests to see if metrics are collected correctly
-        FATServletClient.runTest(server, APP_NAME + "/McpMetricServlet", "testBasicToolCallMetrics");
-        FATServletClient.runTest(server, APP_NAME + "/McpMetricServlet", "testAdvancedToolCallMetrics");
+//        FATServletClient.runTest(server, APP_NAME + "/McpMetricServlet", "testBasicToolCallMetrics");
+//        FATServletClient.runTest(server, APP_NAME + "/McpMetricServlet", "testAdvancedToolCallMetrics");
+    }
+
+    protected String requestHttpServlet(LibertyServer server) {
+        HttpURLConnection con = null;
+        try {
+            String url = "http://9.71.246.72:8010/metrics/";
+
+            URL checkerServletURL = new URL(url);
+            con = (HttpURLConnection) checkerServletURL.openConnection();
+            con.setDoInput(true);
+            con.setDoOutput(true);
+            con.setUseCaches(false);
+            con.setRequestMethod("GET");
+            String sep = System.getProperty("line.separator");
+            String line = null;
+            StringBuilder lines = new StringBuilder();
+            BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+            while ((line = br.readLine()) != null && line.length() > 0) {
+                lines.append(line).append(sep);
+            }
+            return lines.toString();
+        } catch (IOException e) {
+            return null;
+        } catch (Exception e) {
+            return null;
+        } finally {
+            if (con != null)
+                con.disconnect();
+        }
+
     }
 
 }

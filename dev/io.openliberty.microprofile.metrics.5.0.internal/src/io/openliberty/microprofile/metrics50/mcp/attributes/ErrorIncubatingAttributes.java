@@ -14,10 +14,6 @@
  *******************************************************************************/
 package io.openliberty.microprofile.metrics50.mcp.attributes;
 
-import static io.opentelemetry.api.common.AttributeKey.stringKey;
-
-import io.opentelemetry.api.common.AttributeKey;
-
 // DO NOT EDIT, this is an Auto-generated file from
 // buildscripts/templates/registry/incubating_java/IncubatingSemanticAttributes.java.j2
 @SuppressWarnings("unused")
@@ -43,7 +39,7 @@ public final class ErrorIncubatingAttributes {
      *     feature_flag.error.message} for feature flag errors.
      */
     @Deprecated
-    public static final AttributeKey<String> ERROR_MESSAGE = stringKey("error.message");
+    public static final String ERROR_MESSAGE = "error.message";
 
     /**
      * Describes a class of error the operation ended with.
@@ -89,7 +85,7 @@ public final class ErrorIncubatingAttributes {
      *             attribute.
      */
     @Deprecated
-    public static final AttributeKey<String> ERROR_TYPE = stringKey("error.type");
+    public static final String ERROR_TYPE = "error.type";
 
     // Enum definitions
 
@@ -105,6 +101,7 @@ public final class ErrorIncubatingAttributes {
          * A fallback error value to be used when the instrumentation doesn't define a
          * custom value.
          */
+        @Deprecated
         public static final String OTHER = "_OTHER";
 
         private ErrorTypeIncubatingValues() {
